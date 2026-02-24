@@ -218,36 +218,6 @@
     });
   }
 
-  // Copiar e-mail ao clicar (valor validado para evitar copiar conteúdo injetado)
-  const copyEmailBtn = document.getElementById('copyEmailBtn');
-  const emailCopyFeedback = document.getElementById('emailCopyFeedback');
-  const emailFallback = 'pe72684@gmail.com';
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  function isValidEmail(str) {
-    return typeof str === 'string' && emailRegex.test(str) && str.length <= 128;
-  }
-  if (copyEmailBtn && emailCopyFeedback) {
-    copyEmailBtn.addEventListener('click', function () {
-      const raw = this.getAttribute('data-email');
-      const email = isValidEmail(raw) ? raw : emailFallback;
-      navigator.clipboard.writeText(email).then(function () {
-        emailCopyFeedback.classList.add('is-visible');
-        copyEmailBtn.setAttribute('aria-label', 'E-mail copiado');
-        setTimeout(function () {
-          emailCopyFeedback.classList.remove('is-visible');
-          copyEmailBtn.setAttribute('aria-label', 'Copiar e-mail');
-        }, 2000);
-      }).catch(function () {
-        emailCopyFeedback.textContent = 'Não foi possível copiar';
-        emailCopyFeedback.classList.add('is-visible');
-        setTimeout(function () {
-          emailCopyFeedback.classList.remove('is-visible');
-          emailCopyFeedback.textContent = 'E-mail copiado!';
-        }, 2000);
-      });
-    });
-  }
-
   // Header com leve blur/opacidade ao rolar (opcional)
   const header = document.querySelector('.header');
   if (header) {

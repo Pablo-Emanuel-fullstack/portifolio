@@ -574,36 +574,6 @@ body {
   transform: translateX(4px);
 }
 
-.contact__link--copy {
-  position: relative;
-  cursor: pointer;
-  font: inherit;
-  border: 1px solid var(--border);
-  text-align: left;
-}
-
-.contact__link-feedback {
-  position: absolute;
-  left: 50%;
-  bottom: 100%;
-  transform: translateX(-50%) translateY(-6px);
-  padding: 0.35rem 0.75rem;
-  background: var(--accent);
-  color: var(--bg-deep);
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: var(--radius);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
-}
-
-.contact__link-feedback.is-visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-8px);
-}
-
 /* Footer */
 .footer {
   position: relative;
