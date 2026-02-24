@@ -12,11 +12,12 @@
     let particles = [];
     const particleCount = 50;
     const connectDistance = 95;
-    const mouseRadius = 140;
-    const mouseStrength = 0.22;
+    const mouseRadius = 90;
+    const mouseStrength = 0.055;
     const mouseSmooth = 0.06;
 
     const mouse = { x: -9999, y: -9999, targetX: -9999, targetY: -9999, active: false };
+    const driftStrength = 0.15; // movimento contínuo quando não há mouse
     const colors = [
       'rgba(45, 212, 191, 0.35)',
       'rgba(148, 163, 184, 0.2)',
@@ -31,11 +32,15 @@
     }
 
     function createParticle() {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.3 + Math.random() * 0.4;
       return {
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.2,
-        vy: (Math.random() - 0.5) * 0.2,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        driftX: Math.cos(angle) * speed,
+        driftY: Math.sin(angle) * speed,
         r: Math.random() * 1.5 + 0.5,
         color: colors[Math.floor(Math.random() * colors.length)]
       };
@@ -59,15 +64,21 @@
           const dy = p.y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < mouseRadius && dist > 0) {
-            const force = (1 - dist / mouseRadius) * mouseStrength;
+            const t = dist / mouseRadius;
+            const force = (1 - t * t) * mouseStrength;
             const nx = dx / dist;
             const ny = dy / dist;
             p.vx += nx * force;
             p.vy += ny * force;
           }
+        } else {
+          p.vx += p.driftX * driftStrength * 0.08;
+          p.vy += p.driftY * driftStrength * 0.08;
         }
-        p.vx *= 0.98;
-        p.vy *= 0.98;
+        p.vx += p.driftX * 0.012;
+        p.vy += p.driftY * 0.012;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
         p.x += p.vx;
         p.y += p.vy;
         if (p.x < 0 || p.x > width) { p.vx *= -0.8; p.x = Math.max(0, Math.min(width, p.x)); }
@@ -203,6 +214,36 @@
         toggle.classList.remove('is-open');
         links.classList.remove('is-open');
         document.body.classList.remove('nav-open');
+      });
+    });
+  }
+
+  // Copiar e-mail ao clicar (valor validado para evitar copiar conteúdo injetado)
+  const copyEmailBtn = document.getElementById('copyEmailBtn');
+  const emailCopyFeedback = document.getElementById('emailCopyFeedback');
+  const emailFallback = 'pe72684@gmail.com';
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function isValidEmail(str) {
+    return typeof str === 'string' && emailRegex.test(str) && str.length <= 128;
+  }
+  if (copyEmailBtn && emailCopyFeedback) {
+    copyEmailBtn.addEventListener('click', function () {
+      const raw = this.getAttribute('data-email');
+      const email = isValidEmail(raw) ? raw : emailFallback;
+      navigator.clipboard.writeText(email).then(function () {
+        emailCopyFeedback.classList.add('is-visible');
+        copyEmailBtn.setAttribute('aria-label', 'E-mail copiado');
+        setTimeout(function () {
+          emailCopyFeedback.classList.remove('is-visible');
+          copyEmailBtn.setAttribute('aria-label', 'Copiar e-mail');
+        }, 2000);
+      }).catch(function () {
+        emailCopyFeedback.textContent = 'Não foi possível copiar';
+        emailCopyFeedback.classList.add('is-visible');
+        setTimeout(function () {
+          emailCopyFeedback.classList.remove('is-visible');
+          emailCopyFeedback.textContent = 'E-mail copiado!';
+        }, 2000);
       });
     });
   }
